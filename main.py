@@ -2,23 +2,38 @@ import datetime
 
 
 def get_birthdays_per_week(users):
-    weekdays = {0: 'Monday', 1: 'Tuesday', 2: 'Wednesday',
-                3: 'Thursday', 4: 'Friday', 5: 'Saturday', 6: 'Sunday'}
-
     today = datetime.date.today()
 
-    start = today - datetime.timedelta(days=today.weekday())
-    end = start + datetime.timedelta(days=6)
+    if today.weekday() == 0:
+        smallest_diff = -2
+    else:
+        smallest_diff = 0
 
-    birthday_week = {day: [] for day in weekdays.values()}
+    largest_diff = 4
+
+    birthday_week = {day: [] for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
+
+    if today.weekday() == 0:
+        saturday = today - datetime.timedelta(days=2)
+        sunday = today - datetime.timedelta(days=1)
+        for user in users:
+            if user['birthday'].month == sunday.month and user['birthday'].day == sunday.day:
+                birthday_week['Monday'].append(user['name'])
+            elif user['birthday'].month == saturday.month and user['birthday'].day == saturday.day:
+                birthday_week['Monday'].append(user['name'])
 
     for user in users:
-        if start <= user['birthday'].date().replace(year=today.year) <= end:
-            if user['birthday'].weekday() in (5, 6):
-                birthday_week['Monday'].append(user['name'])
-            else:
-                day_week = weekdays[user['birthday'].weekday()]
-                birthday_week[day_week].append(user['name'])
+        bday = user['birthday'].replace(year=today.year)
+
+        if bday < today:
+            bday = bday.replace(year=today.year + 1)
+
+        diff = (bday - today).days
+
+        if smallest_diff <= diff <= largest_diff:
+            day = bday.strftime('%A')
+            if day in birthday_week:
+                birthday_week[day].append(user['name'])
 
     for day, names in birthday_week.items():
         if names:
@@ -26,20 +41,21 @@ def get_birthdays_per_week(users):
 
 
 users = [
-    {'name': 'usr1', 'birthday': datetime.datetime(2000, 4, 24)},
-    {'name': 'usr2', 'birthday': datetime.datetime(2000, 4, 25)},
-    {'name': 'usr3', 'birthday': datetime.datetime(2000, 4, 26)},
-    {'name': 'usr4', 'birthday': datetime.datetime(2000, 4, 27)},
-    {'name': 'usr5', 'birthday': datetime.datetime(2000, 4, 28)},
-    {'name': 'usr6', 'birthday': datetime.datetime(2000, 4, 29)},
-    {'name': 'usr7', 'birthday': datetime.datetime(2000, 4, 30)},
-    {'name': 'usr8', 'birthday': datetime.datetime(2000, 5, 1)},
-    {'name': 'usr9', 'birthday': datetime.datetime(2000, 5, 2)},
-    {'name': 'usr10', 'birthday': datetime.datetime(2000, 5, 3)},
-    {'name': 'usr11', 'birthday': datetime.datetime(2000, 5, 4)},
-    {'name': 'usr12', 'birthday': datetime.datetime(2000, 5, 5)},
-    {'name': 'usr14', 'birthday': datetime.datetime(2000, 5, 7)},
-    {'name': 'usr15', 'birthday': datetime.datetime(2000, 5, 8)},
+    {'name': 'usr1', 'birthday': datetime.date(2023, 4, 21)},
+    {'name': 'usr2', 'birthday': datetime.date(2023, 4, 22)},
+    {'name': 'usr3', 'birthday': datetime.date(2023, 4, 23)},
+    {'name': 'usr4', 'birthday': datetime.date(2023, 4, 24)},
+    {'name': 'usr5', 'birthday': datetime.date(2023, 4, 25)},
+    {'name': 'usr6', 'birthday': datetime.date(2023, 4, 26)},
+    {'name': 'usr7', 'birthday': datetime.date(2023, 4, 27)},
+    {'name': 'usr8', 'birthday': datetime.date(2023, 4, 28)},
+    {'name': 'usr9', 'birthday': datetime.date(2023, 4, 29)},
+    {'name': 'usr10', 'birthday': datetime.date(2023, 4, 30)},
+    {'name': 'usr11', 'birthday': datetime.date(2023, 5, 1)},
+    {'name': 'usr12', 'birthday': datetime.date(2023, 5, 2)},
+    {'name': 'usr13', 'birthday': datetime.date(2023, 5, 3)},
+    {'name': 'usr14', 'birthday': datetime.date(2023, 5, 4)},
+    {'name': 'usr15', 'birthday': datetime.date(2023, 5, 5)},
 ]
 
 get_birthdays_per_week(users)
