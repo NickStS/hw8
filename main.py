@@ -13,31 +13,25 @@ def get_birthdays_per_week(users):
 
     birthday_week = {day: [] for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
 
-    if today.weekday() == 0:
-        saturday = today - datetime.timedelta(days=2)
-        sunday = today - datetime.timedelta(days=1)
-        for user in users:
-            if user['birthday'].month == sunday.month and user['birthday'].day == sunday.day:
-                birthday_week['Monday'].append(user['name'])
-            elif user['birthday'].month == saturday.month and user['birthday'].day == saturday.day:
-                birthday_week['Monday'].append(user['name'])
-
     for user in users:
         bday = user['birthday'].replace(year=today.year)
-
-        if bday < today:
-            bday = bday.replace(year=today.year + 1)
 
         diff = (bday - today).days
 
         if smallest_diff <= diff <= largest_diff:
-            day = bday.strftime('%A')
-            if day in birthday_week:
+            if user['birthday'].weekday() in [5, 6, 0]:
+                if today.weekday() == 0:
+                    birthday_week['Monday'].append(user['name'])
+            else:
+                day = bday.strftime('%A')
                 birthday_week[day].append(user['name'])
 
     for day, names in birthday_week.items():
         if names:
             print(f"{day}: {', '.join(names)}")
+
+
+
 
 
 users = [
